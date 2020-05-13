@@ -45,6 +45,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Button 
+        title="Press Me"
         onPress={onPress}
       />
     </View>
