@@ -55,7 +55,7 @@ export default function App() {
     }
   }
 
-  const [request, result, promptAsync] = AuthSession.useAuthRequest(
+  const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
       clientId: 'ca_HF4KzTyLQxu32PlIbsP1BOyQCHQQmr0f',
       responseType: 'code',
@@ -68,8 +68,8 @@ export default function App() {
   );
 
   useEffect(() => {
-    console.log(result);
-  }, [result]);
+    console.log(request, response);
+  }, [request, response]);
 
   return (
     <View style={styles.container}>
