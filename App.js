@@ -1,5 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useEffect } from 'react';
 import * as WebBrowser from 'expo-web-browser';
+import * as AuthSession from 'expo-auth-session';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import Constants from 'expo-constants';
 import { Linking } from 'expo';
@@ -24,7 +25,7 @@ export default function App() {
     Linking.removeEventListener('url', handleRedirect);
   }
 
-  const onPress = useCallback(async () => {
+  const onPressOne = async () => {
     addLinkingListener();
 
     try {
@@ -40,13 +41,42 @@ export default function App() {
     } catch (err) {
       console.error(err);
     }
-  }, [])
+  };
+
+  const onPressTwo = async () => {
+    try {
+      const result = await WebBrowser.openAuthSessionAsync(
+        'https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_HF4KzTyLQxu32PlIbsP1BOyQCHQQmr0f&scope=read_write',
+      );
+
+      console.log(result);
+    } catch(err) {
+      console.error(err);
+    }
+  }
+
+  const [request, result, promptAsync] = AuthSession.useAuthRequest(
+    {
+      clientId: 'ca_HF4KzTyLQxu32PlIbsP1BOyQCHQQmr0f',
+      responseType: 'code',
+      scopes: ['read_write'],
+      redirectUri: 'https://us-central1-evolve-56e68.cloudfunctions.net/processStripeConnect/stripe/oauth',
+    },
+    {
+      authorizationEndpoint: 'https://connect.stripe.com/oauth/authorize',
+    }
+  );
+
+  useEffect(() => {
+    console.log(result);
+  }, [result]);
 
   return (
     <View style={styles.container}>
       <Button 
         title="Press Me"
-        onPress={onPress}
+        onPress={promptAsync}
+        disabled={!request}
       />
     </View>
   );
